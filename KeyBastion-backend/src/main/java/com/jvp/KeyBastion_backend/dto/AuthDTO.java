@@ -7,7 +7,7 @@ import com.jvp.KeyBastion_backend.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+//import lombok.Builder;
 
 public class AuthDTO {
 
@@ -39,7 +39,7 @@ public class AuthDTO {
     }
 
     // For user registration
-    @Builder
+    //@Builder
     public record RegisterRequest(
             @NotBlank String username,
             @NotBlank String password,
