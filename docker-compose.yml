@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Frontend service
+  frontend:
+    build:
+      context: ./KeyBastion-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - keybastion-network
+    restart: unless-stopped
+
+  # Backend service
+  backend:
+    build:
+      context: ./KeyBastion-backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/keybastion
+      - SPRING_DATASOURCE_USERNAME=keybastion
+      - SPRING_DATASOURCE_PASSWORD=keybastion_password
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+    networks:
+      - keybastion-network
+    restart: unless-stopped
+
+  # Database service
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=keybastion
+      - POSTGRES_USER=keybastion
+      - POSTGRES_PASSWORD=keybastion_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - keybastion-network
+    restart: unless-stopped
+
+networks:
+  keybastion-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
